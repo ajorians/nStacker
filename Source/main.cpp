@@ -4,7 +4,7 @@ extern "C"
 #include <ngc.h>
 }
 
-void *operator new(size_t size)
+/*void *operator new(size_t size)
 {
     return malloc(size);
 }
@@ -22,7 +22,7 @@ void operator delete(void *p)
 void operator delete[](void *p)
 {
     free(p);
-}
+}*/
 
 #include "Board.h"
 using namespace stacker;
@@ -34,14 +34,14 @@ bool StepKeyPressed();
 int main()
 {
    /* Get the gc */
-   Gc gc = *gui_gc_global_GC_ptr;
+   Gc gc = gui_gc_global_GC();
 
    /* Initialization */
-   gui_gc_setRegion(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
    gui_gc_begin(gc);
+   gui_gc_setRegion(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+   gui_gc_clipRect(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GC_CRO_SET);
 
    gui_gc_setColorRGB(gc, 255, 255, 255);
-   gui_gc_clipRect(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GC_CRO_SET);
    gui_gc_fillRect(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
    Board b;
@@ -71,7 +71,7 @@ int main()
             gui_gc_setColorRGB(gc, 255, 0, 0);
             gui_gc_clipRect(gc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GC_CRO_SET);
             int nFontHeight = gui_gc_getFontHeight(gc, gui_gc_getFont(gc));
-            int nTextWidth = gui_gc_getStringWidth(gc, gui_gc_getFont(gc), "Y\0o\0u\0 \0W\0i\0n\0!\0!\0!\0", 0, 10/*10 characters*/);
+            int nTextWidth = gui_gc_getStringWidth(gc, gui_gc_getFont(gc), "Y\0o\0u\0 \0W\0i\0n\0!\0!\0!\0", 0, 10);//10 characters
             int x = SCREEN_WIDTH/2 - nTextWidth/2, y = SCREEN_HEIGHT/2-nFontHeight/2;
             gui_gc_drawString(gc, "Y\0o\0u\0 \0W\0i\0n\0!\0!\0!\0", x, y, GC_SM_TOP);
             gui_gc_blit_to_screen(gc);

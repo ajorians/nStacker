@@ -1,25 +1,38 @@
 GCC = nspire-g++
 LD = nspire-ld
+GENZEHN = genzehn
+
 GCCFLAGS = -Os -Wall -W -marm -Wno-unused-parameter
 LDFLAGS = -lndls
 OBJCOPY := "$(shell which arm-elf-objcopy 2>/dev/null)"
 ifeq (${OBJCOPY},"")
 	OBJCOPY := arm-none-eabi-objcopy
 endif
-EXE = nStacker-GC.tns
+EXE = nStacker-GC
+DISTDIR = ..
+
 OBJS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 vpath %.tns $(DISTDIR)
+vpath %.elf $(DISTDIR)
 
-all: $(EXE)
+all: $(EXE).prg.tns
 
 %.o: %.cpp
 	$(GCC) $(GCCFLAGS) -c $<
 
-$(EXE): $(OBJS)
-	$(LD) $^ -o $(@:.tns=.elf) $(LDFLAGS)
-	$(OBJCOPY) -O binary $(@:.tns=.elf) $@
+$(EXE).elf: $(OBJS)
+	mkdir -p $(DISTDIR)
+	$(LD) $^ -o $(DISTDIR)/$@ $(LDFLAGS)
+
+$(EXE).tns: $(EXE).elf
+	$(GENZEHN) --input $(DISTDIR)/$^ --output $(DISTDIR)/$@ $(ZEHNFLAGS)
+
+$(EXE).prg.tns: $(EXE).tns
+	make-prg $(DISTDIR)/$^ $(DISTDIR)/$@
 
 clean:
 	rm -f *.o *.elf
-	rm -f $(EXE)
+	rm -f $(DISTDIR)/$(EXE).tns
+	rm -f $(DISTDIR)/$(EXE).elf
+	rm -f $(DISTDIR)/$(EXE).prg.tns
 
